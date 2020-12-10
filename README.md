@@ -17,8 +17,12 @@ Forward slash (/) used to indicate spares.
 Upper or lower-case "X" used to indicate strikes.
 
 Each frame must have a valid total.
+
 This includes bonus throws for spares and strikes.
+
 Spares and strikes that are generated as a result of a spare or strike are not counted as requiring valid totals.
+
+The data in the final frame must have 3 throws if there is a spare or strike initially.
 
 # Output:
 Total score for each game output to command line.
