@@ -10,46 +10,70 @@ def parse_string(input_string):
     return frame_data_list
 
 
-def bonus_check(score_list, bonus_throws, score_list_index):
-    print(str(score_list[score_list_index-1]) + " triggered bonus score")
+def bonus_check(bonus_score_list, bonus_throws, score_list_index):
+    bonus_score_data = bonus_score_list.copy()
 
-    del score_list[0:score_list_index]
+    print(str(bonus_score_data[score_list_index]) + " at index " +
+          str(score_list_index) + " triggered bonus_check")
+
+    if score_list_index < len(bonus_score_data):
+        del bonus_score_data[0:score_list_index+1]
+
+    else:
+        del bonus_score_data[0:score_list_index]
 
     bonus_score = 0
 
-    print(score_list)
-
-    print("bonus score: " + str(bonus_score))
+    print("bonus_check list: " + str(bonus_score_data))
 
     throws_remaining = bonus_throws
 
-    for frames in score_list:
+    for frame_bonus in bonus_score_data:
 
         if throws_remaining > 0:
 
-            for pins in frames:
+            for pin_bonus in frame_bonus:
 
                 if throws_remaining > 0:
 
-                    if (pins == "X" or pins == "x"):
+                    if (pin_bonus == "X" or pin_bonus == "x"):
                         bonus_score += 10
+
                         throws_remaining -= 1
 
-                    if (pins == "/"):
-                        spare_remainder = 10 - int(frames[0])
+                        print("Bonus so far = " + str(bonus_score))
+
+                        print("bonus_check Throws Remaining: " +
+                              str(throws_remaining))
+
+                    if (pin_bonus == "/"):
+                        spare_remainder = 10 - int(frame_bonus[0])
+
+                        print("bonus_check Spare Remainder: " +
+                              str(spare_remainder))
+
                         bonus_score += spare_remainder
+
                         throws_remaining -= 1
 
-                    if pins.isdigit():
-                        pin_score = int(pins)
-                        bonus_score += pin_score
+                        print("Bonus so far = " + str(bonus_score))
+
+                        print("bonus_check Throws Remaining: " +
+                              str(throws_remaining))
+
+                    if pin_bonus.isdigit():
+                        pin_int_bonus = int(pin_bonus)
+
+                        bonus_score += pin_int_bonus
+
                         throws_remaining -= 1
 
-                else:
-                    break
+                        print("Bonus so far = " + str(bonus_score))
 
-        else:
-            break
+                        print("bonus_check Throws Remaining: " +
+                              str(throws_remaining))
+
+    print(str(score_list_index) + " end bonus score: " + str(bonus_score))
 
     return bonus_score
 
@@ -57,20 +81,45 @@ def bonus_check(score_list, bonus_throws, score_list_index):
 def score_total(score_list):
     total_score = 0
 
-    for idx, frames in score_list:
+    for idx, frame_score in enumerate(score_list):
 
-        for pins in frames:
+        for pin_score in frame_score:
 
-            if (pins == "X" or pins == "x"):
-                bonus_pins = bonus_check(score_list, 2, idx+1)
+            if (pin_score == "X" or pin_score == "x"):
+                bonus_pins = bonus_check(score_list, 2, idx)
+
                 total_score += 10
+
                 total_score += bonus_pins
+
+            if pin_score == "/":
+                bonus_pins = bonus_check(score_list, 1, idx)
+
+                print(10 - frame_score[1][0])
+
+                spare_remainder = 10 - int(frame_score[1][0])
+
+                print("score_total Spare Remainder: " + str(spare_remainder))
+
+                total_score += spare_remainder
+
+                total_score += bonus_pins
+
+            if pin_score.isdigit():
+                pin_int = int(pin_score)
+
+                total_score += pin_int
+
+            print("Total Score so far = " + str(total_score))
+
+            if idx >= len(score_list):
+                break
 
     return total_score
 
 
-scores = parse_string("01-23-45-x-8/-x-35-51-x-09")
+scores = parse_string("09-18-27-36-45-54-63-72-81-90")
 
-# print(score_total(scores))
+final_score = score_total(scores)
 
-print("total bonus: " + str(bonus_check(scores, 2, 6)))
+print("final score: " + str(final_score))
