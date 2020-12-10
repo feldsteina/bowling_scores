@@ -82,7 +82,7 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
 
                             # Debug output to confirm bonus score
                             # Should be commented out for production
-                            print("Bonus so far = " + str(bonus_score))
+                            # print("Bonus so far = " + str(bonus_score))
 
                             # Debug output to confirm bonus throws remaining.
                             # Should be commented out for production
@@ -105,7 +105,7 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
                             # * More than 3 total throws on final frame
 
                             # Take difference between 10 and current bonus.
-                            spare_remainder = 10 - int(frame_bonus[0])
+                            spare_remainder = 10 - bonus_score
 
                             # Debug to confirm remainder calculated correctly
                             # print("bonus_check Spare Remainder: " +
@@ -141,24 +141,30 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
 
                             # Debug output to confirm bonus score
                             # Should be commented out for production
-                            print("Bonus so far = " + str(bonus_score))
+                            # print("Bonus so far = " + str(bonus_score))
 
                             # Debug output to confirm bonus throws remaining.
                             # Should be commented out for production
                             # print("bonus_check Throws Remaining: " +
                             #   str(throws_remaining))
 
-    print(str(score_list_index) + " end bonus score: " + str(bonus_score))
+    # Debug output to confirm final bonus score
+    # Should be commented out for production
+    # print(str(score_list_index) + " end bonus score: " + str(bonus_score))
 
     return bonus_score
 
 
 def score_total(score_list):
+    # For checking invalid data
     invalid_data_flag = False
 
+    # Running total of score, used for final output
     total_score = 0
 
     for idx, frame_score in enumerate(score_list):
+        # Checks for invalid data flag to gracefully end program
+        # This is done to prevent wrong score output
         if invalid_data_flag:
             break
 
@@ -174,11 +180,11 @@ def score_total(score_list):
             if pin_score == "/":
                 bonus_pins = bonus_check(score_list, 1, idx)
 
-                print(10 - frame_score[1][0])
+                print(10 - int(frame_score[0]))
 
-                spare_remainder = 10 - int(frame_score[1][0])
+                spare_remainder = 10 - int(frame_score[0])
 
-                print("score_total Spare Remainder: " + str(spare_remainder))
+                # print("score_total Spare Remainder: " + str(spare_remainder))
 
                 total_score += spare_remainder
 
@@ -189,24 +195,32 @@ def score_total(score_list):
 
                 total_score += pin_int
 
+            # Handles invalid frame data
+            # First, confirm if no previous conditions were met
             if (pin_score.isdigit() is False and
                     pin_score != "X" and
                     pin_score != "x" and
                     pin_score != "/"):
+                # Print 1-indexed frame in which invalid data was found
                 print("Error at Frame " + str(idx + 1))
+
+                # Print invalid data
                 print("Invalid data found: " + str(pin_score))
 
+                # Set flag to break out of loop
                 invalid_data_flag = True
 
                 break
 
-            print("Total Score so far = " + str(total_score))
+            # Debug output to confirm running total
+            # Should be removed for production
+            # print("Total Score so far = " + str(total_score))
 
     return total_score
 
 
-scores = parse_string("09-18-27-36-45-54-63-72-81-90")
+scores = parse_string("6/-00-00-00-00-00-00-00-00-00")
 
 final_score = score_total(scores)
 
-print("final score: " + str(final_score))
+print(final_score)
