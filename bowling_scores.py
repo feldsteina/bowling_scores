@@ -1,6 +1,14 @@
 # Bowling Score Calculator
 # By: Adam Feldstein
-# Last Modified: 2020-12-09 18:01
+# Created on: 2020-12-09 16:16
+# Last Modified: 2020-12-10 09:44
+
+# Split the input string into a list of strings, using hypens as the delimiter
+# A list of strings is needed due to the possibility of relevant zeroes
+# in the most significant digit of an int,
+# as well as the appearance of non-int data.
+# It is far easier to convert from a text character to an int,
+# as opposed to handling the errors from going the other direction.
 
 
 def parse_string(input_string):
@@ -10,11 +18,27 @@ def parse_string(input_string):
     return frame_data_list
 
 
+# Fast forwards one or two throws as needed to gather the bonus points
+# from strikes or spares.
+
 def bonus_check(bonus_score_list, bonus_throws, score_list_index):
     bonus_score_data = bonus_score_list.copy()
 
-    print(str(bonus_score_data[score_list_index]) + " at index " +
-          str(score_list_index) + " triggered bonus_check")
+    # Debug output to confirm parameters
+
+    # print(str(bonus_score_data[score_list_index]) + " at index " +
+    #       str(score_list_index) +
+    #       " triggered bonus_check")
+
+    # Need to go forward from the frame that triggered this function.
+    # Prior data not needed, and can be culled to allow for cleaner execution.
+    # Removing prior data allows fewer variables to be used.
+
+    # If statement used to check if this is the last frame.
+    # This is used to prevent out-of-bounds errors.
+    # Using list length as the benchmark allows arbitrary game lengths.
+
+    # Could be used in the future as part of error checking for 10 frames only.
 
     if score_list_index < len(bonus_score_data):
         del bonus_score_data[0:score_list_index+1]
@@ -22,18 +46,25 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
     else:
         del bonus_score_data[0:score_list_index]
 
+    # Debug output to confirm remaining list data
+    # print("bonus_check list: " + str(bonus_score_data))
+
+    # Initializes the bonus score to be added later to the Strike or Spare.
     bonus_score = 0
 
-    print("bonus_check list: " + str(bonus_score_data))
-
+    # Almost certainly not needed, but wanted to confirm no scope issues.
     throws_remaining = bonus_throws
 
+    # Iterate through the list
     for frame_bonus in bonus_score_data:
 
+        # Checks if all bonus throws have been used, break out if needed.
         if throws_remaining > 0:
 
+            # Iterate through individial frame data.
             for pin_bonus in frame_bonus:
 
+                # Same as prior check.
                 if throws_remaining > 0:
 
                     if (pin_bonus == "X" or pin_bonus == "x"):
