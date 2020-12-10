@@ -239,11 +239,22 @@ def score_total(score_list):
             # Should be removed for production
             # print("Total Score so far = " + str(total_score))
 
+    # Return total score for console output in main function
     return total_score
 
 
-scores = parse_string("0/-90-81-72-63-54-45-36-27-XXX")
+def main():
+    games = []
 
-final_score = score_total(scores)
+    with open(input_games) as f:
+        games = f.readlines()
 
-print(final_score)
+    games = [x.strip() for x in games]
+
+    for items in games:
+        final_score = score_total(items)
+        print(final_score + "\n")
+
+
+if __name__ == "__main__":
+    main()
