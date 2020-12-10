@@ -250,8 +250,12 @@ def main():
     # Create list of games here to prevent scope issues
     games = []
 
-    with open("input_games", "r") as f:
-        games = f.readlines()
+    try:
+        with open("input_games", "r") as f:
+            games = f.readlines()
+    except FileNotFoundError as err:
+        print("OS error: {0}".format(err))
+        return True
 
     # strip whitespace (newline data) from end of each line
     games = [x.strip() for x in games]
