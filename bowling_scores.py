@@ -2,6 +2,7 @@
 # By: Adam Feldstein
 # Last Modified: 2020-12-09 18:01
 
+
 def parse_string(input_string):
 
     frame_data_list = input_string.split("-")
