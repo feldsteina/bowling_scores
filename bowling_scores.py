@@ -25,6 +25,7 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
     bonus_score_data = bonus_score_list.copy()
 
     # Debug output to confirm parameters
+    # Should be commented out for production
 
     # print(str(bonus_score_data[score_list_index]) + " at index " +
     #       str(score_list_index) +
@@ -55,54 +56,97 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
     # Almost certainly not needed, but wanted to confirm no scope issues.
     throws_remaining = bonus_throws
 
-    # Iterate through the list
-    for frame_bonus in bonus_score_data:
+    # Confirms valid number of bonus throws in parameters.
+    if throws_remaining > 0 and throws_remaining < 3:
 
-        # Checks if all bonus throws have been used, break out if needed.
-        if throws_remaining > 0:
+        # Iterate through the list
+        for frame_bonus in bonus_score_data:
 
-            # Iterate through individial frame data.
-            for pin_bonus in frame_bonus:
+            # Checks if all bonus throws have been used, break out if needed.
+            # Technically allows for calling this function with 0 bonus throws.
+            if throws_remaining > 0:
 
-                # Same as prior check.
-                if throws_remaining > 0:
+                # Iterate through individial frame data.
+                for pin_bonus in frame_bonus:
 
-                    if (pin_bonus == "X" or pin_bonus == "x"):
-                        bonus_score += 10
+                    # Same as prior check.
+                    if throws_remaining > 0:
 
-                        throws_remaining -= 1
+                        # Check for strikes first.
+                        # Earliest special case to trigger.
+                        if (pin_bonus == "X" or pin_bonus == "x"):
+                            bonus_score += 10
 
-                        print("Bonus so far = " + str(bonus_score))
+                            # Decrement bonus throws counter.
+                            throws_remaining -= 1
 
-                        print("bonus_check Throws Remaining: " +
-                              str(throws_remaining))
+                            # Debug output to confirm bonus score
+                            # Should be commented out for production
+                            print("Bonus so far = " + str(bonus_score))
 
-                    if (pin_bonus == "/"):
-                        spare_remainder = 10 - int(frame_bonus[0])
+                            # Debug output to confirm bonus throws remaining.
+                            # Should be commented out for production
+                            # print("bonus_check Throws Remaining: " +
+                            #   str(throws_remaining))
 
-                        print("bonus_check Spare Remainder: " +
-                              str(spare_remainder))
+                        # Check for spares
+                        # Happens later than strikes or a normal number,
+                        # but is more specific than a normal throw.
+                        if (pin_bonus == "/"):
+                            # Only strikes cause a spare to be counted here.
+                            # Result is 10 for the total bonus score.
 
-                        bonus_score += spare_remainder
+                            # In case of invalid frame data,
+                            # this will handle it gracefully.
 
-                        throws_remaining -= 1
+                            # Invalid frame data examples:
+                            # * Mislabeled strike
+                            # * More than 2 throws in the frame
+                            # * More than 3 total throws on final frame
 
-                        print("Bonus so far = " + str(bonus_score))
+                            # Take difference between 10 and current bonus.
+                            spare_remainder = 10 - int(frame_bonus[0])
 
-                        print("bonus_check Throws Remaining: " +
-                              str(throws_remaining))
+                            # Debug to confirm remainder calculated correctly
+                            # print("bonus_check Spare Remainder: " +
+                            #   str(spare_remainder))
 
-                    if pin_bonus.isdigit():
-                        pin_int_bonus = int(pin_bonus)
+                            # Add remainder to current bonus to get 10 total
+                            bonus_score += spare_remainder
 
-                        bonus_score += pin_int_bonus
+                            # Decrement bonus throws counter
+                            throws_remaining -= 1
 
-                        throws_remaining -= 1
+                            # Debug output to confirm bonus score
+                            # Should be commented out for production
+                            # print("Bonus so far = " + str(bonus_score))
 
-                        print("Bonus so far = " + str(bonus_score))
+                            # Debug output to confirm bonus throws remaining.
+                            # Should be commented out for production
+                            # print("bonus_check Throws Remaining: " +
+                            #   str(throws_remaining))
 
-                        print("bonus_check Throws Remaining: " +
-                              str(throws_remaining))
+                        # Handle as number and ignore if invalid data.
+                        # This should fail to find a valid int quietly.
+                        # Full error handling in enclosing function.
+                        if pin_bonus.isdigit():
+                            # Type cast str to int using dummy variable
+                            pin_int_bonus = int(pin_bonus)
+
+                            # Add to bonus score
+                            bonus_score += pin_int_bonus
+
+                            # Decrement bonus throws counter
+                            throws_remaining -= 1
+
+                            # Debug output to confirm bonus score
+                            # Should be commented out for production
+                            print("Bonus so far = " + str(bonus_score))
+
+                            # Debug output to confirm bonus throws remaining.
+                            # Should be commented out for production
+                            # print("bonus_check Throws Remaining: " +
+                            #   str(throws_remaining))
 
     print(str(score_list_index) + " end bonus score: " + str(bonus_score))
 
@@ -110,9 +154,13 @@ def bonus_check(bonus_score_list, bonus_throws, score_list_index):
 
 
 def score_total(score_list):
+    invalid_data_flag = False
+
     total_score = 0
 
     for idx, frame_score in enumerate(score_list):
+        if invalid_data_flag:
+            break
 
         for pin_score in frame_score:
 
@@ -141,10 +189,18 @@ def score_total(score_list):
 
                 total_score += pin_int
 
-            print("Total Score so far = " + str(total_score))
+            if (pin_score.isdigit() is False and
+                    pin_score != "X" and
+                    pin_score != "x" and
+                    pin_score != "/"):
+                print("Error at Frame " + str(idx + 1))
+                print("Invalid data found: " + str(pin_score))
 
-            if idx >= len(score_list):
+                invalid_data_flag = True
+
                 break
+
+            print("Total Score so far = " + str(total_score))
 
     return total_score
 
