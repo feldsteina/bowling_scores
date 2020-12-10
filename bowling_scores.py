@@ -170,29 +170,52 @@ def score_total(score_list):
 
         for pin_score in frame_score:
 
+            # Check for strikes first.
+            # Earliest special case to trigger.
             if (pin_score == "X" or pin_score == "x"):
+                # Calls bonus_check() to calculate the bonus score.
+                # Strikes get 2 bonus throws added to the score.
+
+                # idx is the current index of the overall list.
+                # This is needed to cull data from a copy of score_list.
                 bonus_pins = bonus_check(score_list, 2, idx)
 
+                # Strikes have a base value of 10.
                 total_score += 10
 
+                # Adds bonus to previous result.
                 total_score += bonus_pins
 
+            # Check for spares.
+            # More specific case than the generic number.
+            # When checking cases, I go from "Most Specific" to "Most Generic".
             if pin_score == "/":
+                # Same as the bonus_check in the strikes section.
+
+                # Spares get 1 bonus throw added.
                 bonus_pins = bonus_check(score_list, 1, idx)
 
-                print(10 - int(frame_score[0]))
+                # Debug text, confirm initial data for spare remainder calc.
+                # print(10 - int(frame_score[0]))
 
+                # Easier to calculate difference needed to get 10,
+                # compared to going back and changing earlier data.
                 spare_remainder = 10 - int(frame_score[0])
 
+                # Debug text, confirm spare remainder.
                 # print("score_total Spare Remainder: " + str(spare_remainder))
 
+                # Add to total score
                 total_score += spare_remainder
 
+                # Add bonus score to total
                 total_score += bonus_pins
 
             if pin_score.isdigit():
+                # Typecast to int if the char is an int
                 pin_int = int(pin_score)
 
+                # Add to total score.
                 total_score += pin_int
 
             # Handles invalid frame data
@@ -219,7 +242,7 @@ def score_total(score_list):
     return total_score
 
 
-scores = parse_string("6/-00-00-00-00-00-00-00-00-00")
+scores = parse_string("0/-90-81-72-63-54-45-36-27-XXX")
 
 final_score = score_total(scores)
 
