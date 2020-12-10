@@ -228,7 +228,7 @@ def score_total(score_list):
                 print("Error at Frame " + str(idx + 1))
 
                 # Print invalid data
-                print("Invalid data found: " + str(pin_score))
+                print("Unexpected value found: " + str(pin_score))
 
                 # Set flag to break out of loop
                 invalid_data_flag = True
@@ -240,20 +240,28 @@ def score_total(score_list):
             # print("Total Score so far = " + str(total_score))
 
     # Return total score for console output in main function
-    return total_score
+    if invalid_data_flag:
+        return "Could not find total, error encountered"
+    else:
+        return total_score
 
 
 def main():
+    # Create list of games here to prevent scope issues
     games = []
 
-    with open(input_games) as f:
+    with open("input_games", "r") as f:
         games = f.readlines()
 
+    # strip whitespace (newline data) from end of each line
     games = [x.strip() for x in games]
 
     for items in games:
-        final_score = score_total(items)
-        print(final_score + "\n")
+        scores = parse_string(items)
+
+        final_score = score_total(scores)
+
+        print(final_score)
 
 
 if __name__ == "__main__":
